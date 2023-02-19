@@ -114,7 +114,6 @@ class CountryUnitTest {
 
         coEvery { mockCountryService.fetchCountries() } returns countries
 
-        mvm = MainViewModel()
         mvm.countryService = mockCountryService
     }
 

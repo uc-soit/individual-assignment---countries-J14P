@@ -1,7 +1,6 @@
 package app.plantdiary.individualassignment304832
 
 import android.app.Application
-import app.plantdiary.individualassignment304832.appModule
 import org.koin.android.BuildConfig
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger

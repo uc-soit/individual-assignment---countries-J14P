@@ -6,16 +6,11 @@ import org.junit.Assert.*
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
-import app.plantdiary.individualassignment304832.MainViewModel
-import app.plantdiary.individualassignment304832.dto.Country
 import app.plantdiary.individualassignment304832.service.CountryService
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
-import io.mockk.coVerify
-import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.newSingleThreadContext
 import kotlinx.coroutines.test.resetMain
@@ -69,14 +64,14 @@ class CountryUnitTest {
     @Test
     fun `given a country dto when code is NZ and name is New Zealand then code is NZ and name is New Zealand`() {
         var country = Country("NZ", "New Zealand")
-        assertTrue(country.code.equals("NZ") )
-        assertTrue(country.name.equals("New Zealand"))
+        assertTrue(country.code == "NZ")
+        assertTrue(country.name == "New Zealand")
     }
 
     @Test
     fun `given a country dto when code is NZ and name is New Zealand then output is New Zealand NZ`() {
         var country = Country("NZ", "New Zealand")
-        assertTrue(country.toString().equals("New Zealand NZ"))
+        assertTrue(country.toString() == "New Zealand NZ")
     }
 
     @Test
@@ -116,7 +111,7 @@ class CountryUnitTest {
 
         coEvery {mockCountryService.fetchCountries()} returns countries
 
-        mvm.countryService = mockCountryService
+        mvm = MainViewModel(countryService = mockCountryService)
     }
 
     private fun whenJSONDataAreReadAndParsed() {

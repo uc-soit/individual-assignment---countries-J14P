@@ -20,7 +20,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import app.plantdiary.individualassignment304832.dto.Country
 import app.plantdiary.individualassignment304832.ui.theme.IndividualAssignment304832Theme
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import androidx.compose.runtime.livedata.observeAsState
@@ -126,7 +125,7 @@ class MainActivity : ComponentActivity() {
     }
 
     var strSelectedCountry = "No country selected"
-    var selectedCountrty = Country("","")
+    var selectedCountry = Country("","")
 
     @Composable
     fun TextFieldWithDropdownUsage(countriesIn: List<Country>) {

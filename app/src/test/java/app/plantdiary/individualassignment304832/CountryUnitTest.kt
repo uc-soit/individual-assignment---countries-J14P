@@ -6,18 +6,11 @@ import org.junit.Assert.*
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
-import app.plantdiary.individualassignment304832.MainViewModel
-import app.plantdiary.individualassignment304832.dto.Country
 import app.plantdiary.individualassignment304832.service.CountryService
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
-import io.mockk.coVerify
-import io.mockk.every
 import io.mockk.impl.annotations.MockK
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.newSingleThreadContext
+import kotlinx.coroutines.*
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
@@ -45,13 +38,15 @@ class CountryUnitTest {
     var rule: TestRule = InstantTaskExecutorRule()
     lateinit var mvm: MainViewModel
     lateinit var countryService: CountryService
-    var allCountries : List<Country>? = ArrayList<Country>()
+    var allCountries: List<Country>? = ArrayList()
 
+    @OptIn(DelicateCoroutinesApi::class)
     private val mainThreadSurrogate = newSingleThreadContext("UI thread")
 
     @MockK
     lateinit var mockCountryService: CountryService
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Before
     fun populateCountries() {
         Dispatchers.setMain(mainThreadSurrogate)
@@ -60,6 +55,7 @@ class CountryUnitTest {
 
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @After
     fun tearDown() {
         Dispatchers.resetMain() // reset the main dispatcher to the original Main dispatcher
@@ -68,25 +64,27 @@ class CountryUnitTest {
 
     @Test
     fun `given a country dto when code is NZ and name is New Zealand then code is NZ and name is New Zealand`() {
-        var country = Country("NZ", "New Zealand")
-        assertTrue(country.code.equals("NZ") )
-        assertTrue(country.name.equals("New Zealand"))
+        val country = Country("NZ", "New Zealand")
+        assertTrue(country.code == "NZ")
+        assertTrue(country.name == "New Zealand")
     }
 
     @Test
     fun `given a country dto when code is NZ and name is New Zealand then output is New Zealand NZ`() {
-        var country = Country("NZ", "New Zealand")
-        assertTrue(country.toString().equals("New Zealand NZ"))
+        val country = Country("NZ", "New Zealand")
+        assertTrue(country.toString() == "New Zealand NZ")
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun `Given service connects to Countries JSON stream when data are read and parsed then country collection should be greater than zero`() =runTest {
-        launch(Dispatchers.Main) {
-            givenCountryServiceIsInitialized()
-            whenServiceDataAreReadAndParsed()
-            thenTheCountryCollectionSizeShouldBeGreaterThanZero()
+    fun `Given service connects to Countries JSON stream when data are read and parsed then country collection should be greater than zero`() =
+        runTest {
+            launch(Dispatchers.Main) {
+                givenCountryServiceIsInitialized()
+                whenServiceDataAreReadAndParsed()
+                thenTheCountryCollectionSizeShouldBeGreaterThanZero()
+            }
         }
-    }
 
     private fun givenCountryServiceIsInitialized() {
         countryService = CountryService()
@@ -103,9 +101,9 @@ class CountryUnitTest {
 
     @Test
     fun `given a view model with live data when populated with countries then results should contain Belize`() {
-            givenViewModelIsInitializedWithMockData()
-            whenJSONDataAreReadAndParsed()
-            thenResultsShouldContainBelize()
+        givenViewModelIsInitializedWithMockData()
+        whenJSONDataAreReadAndParsed()
+        thenResultsShouldContainBelize()
     }
 
     private fun givenViewModelIsInitializedWithMockData() {
@@ -114,7 +112,7 @@ class CountryUnitTest {
         countries.add(Country("GB", "United Kingdom"))
         countries.add(Country("US", "United States"))
 
-        coEvery {mockCountryService.fetchCountries()} returns countries
+        coEvery { mockCountryService.fetchCountries() } returns countries
 
         mvm.countryService = mockCountryService
     }
@@ -124,8 +122,8 @@ class CountryUnitTest {
     }
 
     private fun thenResultsShouldContainBelize() {
-        var allCountries : List<Country>? = ArrayList<Country>()
-        val latch = CountDownLatch(1);
+        var allCountries: List<Country>? = ArrayList()
+        val latch = CountDownLatch(1)
         val observer = object : Observer<List<Country>> {
             override fun onChanged(t: List<Country>?) {
                 allCountries = t

@@ -11,28 +11,26 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import app.plantdiary.individualassignment304832.dto.Country
+import androidx.compose.ui.window.PopupProperties
 import app.plantdiary.individualassignment304832.ui.theme.IndividualAssignment304832Theme
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.text.TextRange
-import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.window.PopupProperties
-import androidx.lifecycle.Observer
 
 class MainActivity : ComponentActivity() {
 
-    private val viewModel: MainViewModel by viewModel<MainViewModel>()
+    private val viewModel: MainViewModel by viewModel()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -69,7 +67,8 @@ class MainActivity : ComponentActivity() {
         val context = LocalContext.current
         Button(
             onClick = {
-                Toast.makeText(context, "Selected Country $strSelectedCountry", Toast.LENGTH_LONG).show()
+                Toast.makeText(context, "Selected Country $strSelectedCountry", Toast.LENGTH_LONG)
+                    .show()
             },
             modifier = Modifier.padding(all = Dp(10F)),
             enabled = true,
@@ -83,7 +82,7 @@ class MainActivity : ComponentActivity() {
 
     @Composable
     fun Countries(countriesIn: List<Country>) {
-        var countryName : String by remember { mutableStateOf("United States") }
+        var countryName: String by remember { mutableStateOf("United States") }
         var expanded by remember { mutableStateOf(false) }
 
         Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
@@ -97,16 +96,16 @@ class MainActivity : ComponentActivity() {
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(text= countryName, fontSize = 18.sp, modifier = Modifier.padding(end = 8.dp))
+                Text(text = countryName, fontSize = 18.sp, modifier = Modifier.padding(end = 8.dp))
                 Icon(imageVector = Icons.Filled.ArrowDropDown, contentDescription = "")
-                DropdownMenu(expanded = expanded, onDismissRequest = {expanded = false}) {
-                    countriesIn.forEach {
-                            country -> DropdownMenuItem(onClick = {
-                        expanded = false
-                        countryName = country.toString()
-                    }) {
-                        Text(text = country.toString())
-                    }
+                DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+                    countriesIn.forEach { country ->
+                        DropdownMenuItem(onClick = {
+                            expanded = false
+                            countryName = country.toString()
+                        }) {
+                            Text(text = country.toString())
+                        }
                     }
                 }
             }
@@ -126,14 +125,14 @@ class MainActivity : ComponentActivity() {
     }
 
     var strSelectedCountry = "No country selected"
-    var selectedCountrty = Country("","")
+    var selectedCountry = Country("", "")
 
     @Composable
     fun TextFieldWithDropdownUsage(countriesIn: List<Country>) {
 
-        val dropDownOptions = remember{ mutableStateOf(listOf<Country>())}
-        val textFieldValue = remember {mutableStateOf(TextFieldValue())}
-        val dropDownExpanded = remember {mutableStateOf(false)}
+        val dropDownOptions = remember { mutableStateOf(listOf<Country>()) }
+        val textFieldValue = remember { mutableStateOf(TextFieldValue()) }
+        val dropDownExpanded = remember { mutableStateOf(false) }
 
         fun onDropdownDismissRequest() {
             dropDownExpanded.value = false
@@ -143,7 +142,9 @@ class MainActivity : ComponentActivity() {
             strSelectedCountry = value.text
             dropDownExpanded.value = true
             textFieldValue.value = value
-            dropDownOptions.value = countriesIn.filter { it.toString().startsWith(value.text) && it.toString() != value.text }.take(3)
+            dropDownOptions.value = countriesIn.filter {
+                it.toString().startsWith(value.text) && it.toString() != value.text
+            }.take(3)
         }
 
         TextFieldWithDropdown(
